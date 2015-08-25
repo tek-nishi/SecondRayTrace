@@ -1,0 +1,18 @@
+{
+  "window_width":  512,
+  "window_height": 384,
+
+  "path": "dragon.dae",
+  
+  "wait_time": 10,
+
+  "subpixel_num": 4,
+  "sample_num":   8,
+
+  "recursive_depth": 6,
+
+  "focal_distance": 1.55,
+  "lens_radius":    0.0,
+
+  "exposure": -3
+}
