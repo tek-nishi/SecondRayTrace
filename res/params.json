@@ -2,19 +2,21 @@
   "window_width":  512,
   "window_height": 384,
 
-  "path": "dragon.dae",
+  "path": "scene2.dae",
   
-  "wait_time": 10,
+  "wait_time": 30,
 
-  "subpixel_num": 1,
-  "sample_num":   8,
+  "subpixel_num": 8,
+  "sample_num":   64,
 
-  "recursive_depth": 6,
+  "recursive_depth": 7,
 
-  "focal_distance": 1.55,
-  "lens_radius":    0.0,
+  "focal_distance": 1.24,
+  "lens_radius":    0.02,
 
-  "exposure": -2.5,
+  "exposure": -2.7,
 
-  "environment": "Barce_Rooftop_C_Env.hdr"
+  "ior_value": 1.8,
+  
+  "environment": "03-Ueno-Shrine_Env.hdr"
 }

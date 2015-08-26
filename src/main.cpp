@@ -65,6 +65,18 @@ int main() {
 
   auto scene = SceneLoader::load(os.documentPath() + "res/" + params.at("path").get<std::string>());
 
+#ifdef DEBUG
+  // Cheetah3Dが書き出すColladaはIORを含んでいないので、検証用に設定
+  if (params.contains("ior_value")) {
+    auto& model = scene.model;
+    auto& materials = model.material();
+    Real ior_value = params.at("ior_value").get<double>();
+    for (auto& m : materials) {
+      m.ior(ior_value);
+    }
+  }
+#endif
+
   // 書き出し先(フォルダ作成)
   std::string save_path{ os.documentPath() + "progress" };
   Os::createDirecrory(save_path);

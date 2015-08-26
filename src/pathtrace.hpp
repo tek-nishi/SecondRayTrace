@@ -25,62 +25,6 @@ struct TestInfo {
 };
 
 
-// 半球内で任意の方向の単位ベクトルを生成
-Vec3f radiationVector(Random& random) {
-  Real r1 = random.fromZeroToOne();
-  Real r2 = random.fromZeroToOne();
-
-  Real t0 = std::acos(std::sqrt(r1));
-  Real t1 = 2.0 * M_PI * r2;
-
-  return Vec3f(std::sin(t0) * std::cos(t1), std::cos(t0), std::sin(t0) * std::sin(t1));
-}
-
-
-Vec3f radiationVector(const Vec3f& w, Random& random) {
-  Vec3f u = (std::abs(w.x()) > 0.00001) ? Vec3f::UnitY().cross(w).normalized()
-                                        : Vec3f::UnitX().cross(w).normalized();
-  Vec3f v = w.cross(u);
-
-  const Real r1  = 2.0 * M_PI * random.fromZeroToOne();
-  const Real r2  = random.fromZeroToOne();
-  const Real r2s = std::sqrt(r2);
-  
-  return (u * std::cos(r1) * r2s
-        + v * std::sin(r1) * r2s
-        + w * std::sqrt(1.0 - r2)).normalized();
-}
-
-
-Vec3f radiationVector_uniform(const Vec3f& w, Halton& random, const int dim) {
-  Vec3f u = (std::abs(w.x()) > 0.0001f) ? Vec3f::UnitY().cross(w).normalized()
-                                        : Vec3f::UnitX().cross(w).normalized();
-  Vec3f v = w.cross(u);
-
-  const Real phi = 2.0 * M_PI * random(dim + 0);
-  const Real cos_theta = 1.0 - random(dim + 1);
-  const Real sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
-  
-  return (u * std::cos(phi) * sin_theta
-        + v * std::sin(phi) * sin_theta
-        + w * cos_theta).normalized();
-          
-}
-
-Vec3f radiationVector_cosinus(const Vec3f& w, Halton& random, const int dim) {
-  Vec3f u = (std::abs(w.x()) > 0.0001) ? Vec3f::UnitY().cross(w).normalized()
-                                       : Vec3f::UnitX().cross(w).normalized();
-  Vec3f v = w.cross(u);
-
-  const Real phi = 2.0 * M_PI * random(dim + 0);
-  const Real cos_theta = std::sqrt(1.0 - random(dim + 1));
-  const Real sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
-  
-  return (u * std::cos(phi) * sin_theta
-        + v * std::sin(phi) * sin_theta
-        + w * cos_theta).normalized();
-}
-
 Vec3f radiationVector_qmc(const Vec3f& w, Halton& random, const int dim) {
   Vec3f u = (std::abs(w.x()) > 0.0001) ? Vec3f::UnitY().cross(w).normalized()
                                        : Vec3f::UnitX().cross(w).normalized();
@@ -330,7 +274,6 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
   if (!material.diffuse().isZero()) {
     // TIPS:ベクトルが同じ場所に衝突しないように少し浮かせる
     Vec3f passtarce_start(test_info.hit_pos + test_info.hit_normal * 0.001);
-    // Vec3f passtarce_vec = radiationVector_uniform(test_info.hit_normal, random, recursive_depth * 2);
     Vec3f passtarce_vec = radiationVector_qmc(test_info.hit_normal, random, recursive_depth * 2);
     
     light_diffuse = rayTrace(passtarce_start, passtarce_vec,
@@ -340,7 +283,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                              model,
                              bvh_node,
                              bg,
-                             random);// * 2.0 * passtarce_vec.dot(test_info.hit_normal);
+                             random);
   }
   
   Real reflect_value = 1.0 - material.reflective().maxCoeff();
@@ -495,27 +438,9 @@ bool render(std::shared_ptr<std::vector<u_char> > row_image,
       Real exposure = info->exposure;
       std::for_each(image.begin(), image.end(),
                     [&row_image, &index, &exposure](const Pixel& pixel) {
-#if 1
                       (*row_image)[index + 0] = expose(pixel.x(), exposure) * 255;
                       (*row_image)[index + 1] = expose(pixel.y(), exposure) * 255;
                       (*row_image)[index + 2] = expose(pixel.z(), exposure) * 255;
-#else
-                      row_image[index + 0] = std::pow(expose(pixel.x(), exposure), 1.0 / 2.2) * 255;
-                      row_image[index + 1] = std::pow(expose(pixel.y(), exposure), 1.0 / 2.2) * 255;
-                      row_image[index + 2] = std::pow(expose(pixel.z(), exposure), 1.0 / 2.2) * 255;
-#endif
-                      
-                      // // ガンマ補正
-                      // Pixel gp = pixel.array().pow(1.0 / 2.2);
-                      
-                      // row_image[index + 0] = std::min(gp.x(), Real(1.0)) * 255;
-                      // row_image[index + 1] = std::min(gp.y(), Real(1.0)) * 255;
-                      // row_image[index + 2] = std::min(gp.z(), Real(1.0)) * 255;
-
-                      // row_image[index + 0] = std::min(pixel.x(), Real(1.0)) * 255;
-                      // row_image[index + 1] = std::min(pixel.y(), Real(1.0)) * 255;
-                      // row_image[index + 2] = std::min(pixel.z(), Real(1.0)) * 255;
-                      
                       index += 3;
                     });
     }
