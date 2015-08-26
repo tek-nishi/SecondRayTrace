@@ -6,15 +6,15 @@
   
   "wait_time": 10,
 
-  "subpixel_num": 4,
-  "sample_num":   16,
+  "subpixel_num": 1,
+  "sample_num":   8,
 
   "recursive_depth": 6,
 
   "focal_distance": 1.55,
   "lens_radius":    0.0,
 
-  "exposure": -3,
+  "exposure": -2.5,
 
-  "environment": "bg.png"
+  "environment": "Barce_Rooftop_C_Env.hdr"
 }

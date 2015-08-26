@@ -16,6 +16,38 @@
 #include "pathtrace.hpp"
 #include "os.hpp"
 #include "bvh.hpp"
+#include "hdri.hpp"
+
+
+std::shared_ptr<Pathtrace::RenderInfo> createRenderInfo(const picojson::value& params,
+                                                        const Os& os,
+                                                        const int window_width, const int window_height,
+                                                        const std::vector<GLint>& viewport,
+                                                        const Scene& scene,
+                                                        const std::vector<std::vector<int> >& perm_table) {
+
+  auto info = std::make_shared<Pathtrace::RenderInfo>(window_width, window_height,
+                                                      viewport,
+
+                                                      scene.camera,
+                                                      scene.ambient,
+                                                      scene.lights,
+                                                      scene.model,
+
+                                                      os.documentPath() + "res/" + params.at("environment").get<std::string>(),
+                                                      perm_table,
+
+                                                      int(params.at("subpixel_num").get<double>()),
+                                                      int(params.at("sample_num").get<double>()),
+                                                      int(params.at("recursive_depth").get<double>()),
+
+                                                      params.at("focal_distance").get<double>(),
+                                                      params.at("lens_radius").get<double>(),
+    
+                                                      params.at("exposure").get<double>());
+
+  return info;
+}
 
 
 int main() {
@@ -44,42 +76,16 @@ int main() {
   // posToWorldで使うviewportの準備
   std::vector<GLint> viewport{ 0, 0, window_width, window_height };
 
-  // BVH構築
-  auto bvh_node = Bvh::createFromModel(scene.model);
-
-  // 背景
-  Texture bg(os.documentPath() + "res/" + params.at("environment").get<std::string>());
-  
   // Halton列で使うシャッフル列の生成
   std::vector<std::vector<int> > perm_table = faurePermutation(100);
-  
-  // レンダリング準備
-  Pathtrace::RenderInfo info_params = {
-    { window_width, window_height },
 
-    viewport,
-    scene.camera,
-    scene.ambient,
-    scene.lights,
-    scene.model,
-    bvh_node,
-
-    bg,
-    
-    perm_table,
-
-    int(params.at("subpixel_num").get<double>()),
-    int(params.at("sample_num").get<double>()),
-    int(params.at("recursive_depth").get<double>()),
-
-    params.at("focal_distance").get<double>(),
-    params.at("lens_radius").get<double>(),
-    
-    params.at("exposure").get<double>(),
-  };
-  // TIPS:コピーコンストラクタを使っている
-  auto info = std::make_shared<Pathtrace::RenderInfo>(info_params);
-  
+  // レンダリングに必要な情報を生成
+  auto info = createRenderInfo(params,
+                               os,
+                               window_width, window_height,
+                               viewport,
+                               scene,
+                               perm_table);
 
   // カメラの内部行列を生成
   //   posToWorldで使う
@@ -103,7 +109,7 @@ int main() {
   auto render_begin = std::chrono::steady_clock::now();
 
   int png_index = 1;
-  
+
   while (1) {
     if (!app_env.isOpen()) break;
 

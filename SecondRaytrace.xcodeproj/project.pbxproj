@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		472C852518751939005FA3E9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 472C852418751939005FA3E9 /* main.cpp */; };
 		4767E19D1938695B0078ACCD /* libassimp OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47BD7E47189D5DBB00CB7469 /* libassimp OSX.a */; };
+		47AD74271B8D698C00A3F72F /* rgbe.c in Sources */ = {isa = PBXBuildFile; fileRef = 47AD74261B8D698C00A3F72F /* rgbe.c */; };
 		47AF008918751C020038CA1E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 47AF008818751C020038CA1E /* res */; };
 		47AF008D18751D6A0038CA1E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AF008C18751D6A0038CA1E /* Cocoa.framework */; };
 		47AF008F18751D700038CA1E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AF008E18751D700038CA1E /* OpenGL.framework */; };
@@ -23,6 +24,7 @@
 		472C852418751939005FA3E9 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		472C852618751950005FA3E9 /* SecondRaytrace-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "SecondRaytrace-Info.plist"; path = "OSX/SecondRaytrace-Info.plist"; sourceTree = "<group>"; };
 		47A21417187D7D5300D960F7 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		47AD74261B8D698C00A3F72F /* rgbe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rgbe.c; path = src/rgbe.c; sourceTree = "<group>"; };
 		47AF008818751C020038CA1E /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
 		47AF008C18751D6A0038CA1E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		47AF008E18751D700038CA1E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -66,6 +68,7 @@
 		47D9C271187517DD003D46FE = {
 			isa = PBXGroup;
 			children = (
+				47AD74261B8D698C00A3F72F /* rgbe.c */,
 				472C852418751939005FA3E9 /* main.cpp */,
 				47AF008818751C020038CA1E /* res */,
 				47AF009618751E5A0038CA1E /* OSX */,
@@ -161,6 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				472C852518751939005FA3E9 /* main.cpp in Sources */,
+				47AD74271B8D698C00A3F72F /* rgbe.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,6 +11,7 @@
 #include "random.hpp"
 #include "halton.hpp"
 #include "bvh.hpp"
+#include "hdri.hpp"
 
 
 namespace Pathtrace {
@@ -214,7 +215,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                const bool back_face,
                const Model& model,
                const Bvh::BvhNode& bvh_node,
-               const Texture& bg,
+               const Hdri& bg,
                Halton& random) {
 
   // BVHによるRayとMeshの交差判定
@@ -225,7 +226,9 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
   if (!has_hit) {
     // 環境マップのピクセルを使う
     Real thera = std::acos(ray_vec.y());
-    Real phi   = std::acos(ray_vec.x() / std::sqrt(ray_vec.x() * ray_vec.x() + ray_vec.z() * ray_vec.z()));
+    Real l = std::sqrt(ray_vec.x() * ray_vec.x() + ray_vec.z() * ray_vec.z());
+    Real xz = (l > 0.0) ? ray_vec.x() / l : 0.0;
+    Real phi = std::acos(xz);
     if (ray_vec.z() < 0.0) {
       phi = 2.0 * M_PI - phi;
     }
@@ -362,17 +365,17 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
 struct RenderInfo {
   Vec2i size;
 
-  std::vector<GLint>& viewport;
+  std::vector<GLint> viewport;
 
-  Camera3D& camera;
-  Pixel& ambient;
-  std::vector<Light>& lights;
-  Model& model;
-  Bvh::BvhNode& bvh_node;
+  Camera3D camera;
+  Pixel ambient;
+  std::vector<Light> lights;
+  Model model;
+  Bvh::BvhNode bvh_node;
 
-  Texture& bg;
+  Hdri bg;
 
-  std::vector<std::vector<int> >& perm_table;
+  std::vector<std::vector<int> > perm_table;
 
   int subpixel_num;
   int sample_num;
@@ -382,6 +385,38 @@ struct RenderInfo {
   Real lens_radius;
   
   Real exposure;
+
+
+  RenderInfo(const int width, const int height,
+             const std::vector<GLint>& src_viewport,
+             const Camera3D& src_camera,
+             const Pixel& src_ambient,
+             const std::vector<Light>& src_lights,
+             const Model& src_model,
+             const std::string& bg_path,
+             const std::vector<std::vector<int> >& src_perm_table,
+             const int src_subpixel_num,
+             const int src_sample_num,
+             const int src_recursive_depth,
+             const Real src_focal_distance,
+             const Real src_lens_radius,
+             const Real src_exposure) :
+    size(width, height),
+    viewport(src_viewport),
+    camera(src_camera),
+    ambient(src_ambient),
+    lights(src_lights),
+    model(src_model),
+    bvh_node(Bvh::createFromModel(src_model)),
+    bg(bg_path),
+    perm_table(src_perm_table),
+    subpixel_num(src_subpixel_num),
+    sample_num(src_sample_num),
+    recursive_depth(src_recursive_depth),
+    focal_distance(src_focal_distance),
+    lens_radius(src_lens_radius),
+    exposure(src_exposure)
+  { }
 };
 
 
