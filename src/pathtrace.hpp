@@ -214,6 +214,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                const bool back_face,
                const Model& model,
                const Bvh::BvhNode& bvh_node,
+               const Texture& bg,
                Halton& random) {
 
   // BVHによるRayとMeshの交差判定
@@ -221,7 +222,19 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
   bool has_hit = Bvh::intersect(test_info, ray_start, ray_vec, bvh_node, back_face);
 
   // 接触なし
-  if (!has_hit) return Pixel::Zero();
+  if (!has_hit) {
+    // 環境マップのピクセルを使う
+    Real thera = std::acos(ray_vec.y());
+    Real phi   = std::acos(ray_vec.x() / std::sqrt(ray_vec.x() * ray_vec.x() + ray_vec.z() * ray_vec.z()));
+    if (ray_vec.z() < 0.0) {
+      phi = 2.0 * M_PI - phi;
+    }
+
+    Real u = phi / (2.0 * M_PI) + 0.25;
+    Real v = thera / M_PI;
+    
+    return bg.pixel(u, v);
+  }
 
   const auto& material = *test_info.material;
 
@@ -244,6 +257,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                                 false,
                                 model,
                                 bvh_node,
+                                bg,
                                 random);
   }
 
@@ -285,6 +299,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                                   false,
                                   model,
                                   bvh_node,
+                                  bg,
                                   random);
     }
     else {
@@ -302,6 +317,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                                   refraction_back_face,
                                   model,
                                   bvh_node,
+                                  bg,
                                   random) * Tr;
     }
   }
@@ -320,6 +336,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                              false,
                              model,
                              bvh_node,
+                             bg,
                              random);// * 2.0 * passtarce_vec.dot(test_info.hit_normal);
   }
   
@@ -352,6 +369,8 @@ struct RenderInfo {
   std::vector<Light>& lights;
   Model& model;
   Bvh::BvhNode& bvh_node;
+
+  Texture& bg;
 
   std::vector<std::vector<int> >& perm_table;
 
@@ -427,6 +446,7 @@ bool render(std::shared_ptr<std::vector<u_char> > row_image,
                                 false,
                                 info->model,
                                 info->bvh_node,
+                                info->bg,
                                 render_random);
         }
       }

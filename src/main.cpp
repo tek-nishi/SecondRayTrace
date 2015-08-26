@@ -47,6 +47,9 @@ int main() {
   // BVH構築
   auto bvh_node = Bvh::createFromModel(scene.model);
 
+  // 背景
+  Texture bg(os.documentPath() + "res/" + params.at("environment").get<std::string>());
+  
   // Halton列で使うシャッフル列の生成
   std::vector<std::vector<int> > perm_table = faurePermutation(100);
   
@@ -60,6 +63,8 @@ int main() {
     scene.lights,
     scene.model,
     bvh_node,
+
+    bg,
     
     perm_table,
 

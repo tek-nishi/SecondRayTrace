@@ -7,12 +7,14 @@
   "wait_time": 10,
 
   "subpixel_num": 4,
-  "sample_num":   8,
+  "sample_num":   16,
 
   "recursive_depth": 6,
 
   "focal_distance": 1.55,
   "lens_radius":    0.0,
 
-  "exposure": -3
+  "exposure": -3,
+
+  "environment": "bg.png"
 }

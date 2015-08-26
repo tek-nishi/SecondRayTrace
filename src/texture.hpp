@@ -92,11 +92,11 @@ private:
     // レイトレ用にイメージを取り出す
     pixel_.reserve(width_ * height_);
     const u_char* image = png_obj.image();
-    int next_pixel = (type == PNG_COLOR_TYPE_RGB) ? 3 : 4;
-    for (int i = 0; i < width_ * height_; ++i) {
-      Real r = image[0] / 255.0f;
-      Real g = image[1] / 255.0f;
-      Real b = image[2] / 255.0f;
+    int next_pixel = (type == GL_RGB) ? 3 : 4;
+    for (int i = 0; i < (width_ * height_); ++i) {
+      Real r = image[0] / 255.0;
+      Real g = image[1] / 255.0;
+      Real b = image[2] / 255.0;
       
       pixel_.push_back({ r, g, b });
       image += next_pixel;
