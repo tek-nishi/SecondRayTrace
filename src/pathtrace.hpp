@@ -373,6 +373,11 @@ Real expose(const Real light, const Real exposure) {
 bool render(std::shared_ptr<std::vector<u_char> > row_image,
             std::shared_ptr<RenderInfo> info) {
   bool do_dof = info->lens_radius > 0.0;
+
+  // 画面中心から奥に伸びるベクトル
+  Vec3f to_far_z = info->camera.posToWorld(Vec3f(info->size.x() / 2, info->size.y() / 2, 1.0),
+                                           Affinef::Identity(), info->viewport);
+  to_far_z.normalize();
   
   for (int iy = 0; iy < info->size.y(); ++iy) {
     std::vector<Pixel> image(info->size.x());
@@ -395,8 +400,8 @@ bool render(std::shared_ptr<std::vector<u_char> > row_image,
           // 画面最前→最奥へ伸びる線分を計算
           Vec3f ray_start = info->camera.posToWorld(Vec3f(x, y, 0.0),
                                                     Affinef::Identity(), info->viewport);
-          Vec3f ray_end   = info->camera.posToWorld(Vec3f(x, y, 1.0),
-                                                    Affinef::Identity(), info->viewport);
+          Vec3f ray_end = info->camera.posToWorld(Vec3f(x, y, 1.0),
+                                                  Affinef::Identity(), info->viewport);
 
           Vec3f ray_vec = (ray_end - ray_start).normalized();
           
@@ -405,7 +410,7 @@ bool render(std::shared_ptr<std::vector<u_char> > row_image,
             // SOURCE:https://github.com/githole/simple-pathtracer/tree/simple-pathtracer-DOF
 
             // フォーカスが合う位置
-            Real ft = std::abs(info->focal_distance / ray_vec.z());
+            Real ft = std::abs(info->focal_distance / to_far_z.dot(ray_vec));
             Vec3f focus_pos = ray_start + ray_vec * ft;
 
             // 適当に決めたレンズの通過位置とフォーカスが合う位置からRayを作り直す(屈折効果)

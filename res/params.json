@@ -6,15 +6,15 @@
   
   "wait_time": 30,
 
-  "subpixel_num": 3,
-  "sample_num":   100,
+  "subpixel_num": 4,
+  "sample_num":   75,
 
   "recursive_depth": 7,
 
   "focal_distance": 1.24,
-  "lens_radius":    0.04,
+  "lens_radius":    0.02,
 
-  "exposure": -2.7,
+  "exposure": -2.6,
 
   "ior_value": 1.5,
   
