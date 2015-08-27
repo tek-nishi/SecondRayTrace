@@ -20,11 +20,12 @@
 
 
 std::shared_ptr<Pathtrace::RenderInfo> createRenderInfo(const picojson::value& params,
-                                                        const Os& os,
+                                                        const std::string& document_path,
                                                         const int window_width, const int window_height,
-                                                        const std::vector<GLint>& viewport,
-                                                        const Scene& scene,
-                                                        const std::vector<std::vector<int> >& perm_table) {
+                                                        const Scene& scene) {
+
+  // posToWorldで使うviewport
+  std::vector<GLint> viewport{ 0, 0, window_width, window_height };
 
   auto info = std::make_shared<Pathtrace::RenderInfo>(window_width, window_height,
                                                       viewport,
@@ -34,8 +35,7 @@ std::shared_ptr<Pathtrace::RenderInfo> createRenderInfo(const picojson::value& p
                                                       scene.lights,
                                                       scene.model,
 
-                                                      os.documentPath() + "res/" + params.at("environment").get<std::string>(),
-                                                      perm_table,
+                                                      document_path + "res/" + params.at("environment").get<std::string>(),
 
                                                       int(params.at("subpixel_num").get<double>()),
                                                       int(params.at("sample_num").get<double>()),
@@ -83,19 +83,14 @@ int main() {
   auto row_image = std::make_shared<std::vector<u_char> >(window_height * window_width * 3);
   std::fill(row_image->begin(), row_image->end(), 255);
 
-  // posToWorldで使うviewportの準備
-  std::vector<GLint> viewport{ 0, 0, window_width, window_height };
-
-  // Halton列で使うシャッフル列の生成
-  std::vector<std::vector<int> > perm_table = faurePermutation(100);
-
   // レンダリングに必要な情報を生成
   auto info = createRenderInfo(params,
-                               os,
+                               os.documentPath(),
                                window_width, window_height,
-                               viewport,
-                               scene,
-                               perm_table);
+                               scene);
+
+  // QMC初期化
+  init_prime_numbers();
 
   // カメラの内部行列を生成
   //   posToWorldで使う

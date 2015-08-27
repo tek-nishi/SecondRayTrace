@@ -9,7 +9,7 @@
 #include <limits>
 #include "collision.hpp"
 #include "random.hpp"
-#include "halton.hpp"
+#include "qmc.hpp"
 #include "bvh.hpp"
 #include "hdri.hpp"
 
@@ -25,13 +25,15 @@ struct TestInfo {
 };
 
 
-Vec3f radiationVector_qmc(const Vec3f& w, Halton& random, const int dim) {
+
+
+Vec3f radiationVector_qmc(const Vec3f& w, Qmc& random) {
   Vec3f u = (std::abs(w.x()) > 0.0001) ? Vec3f::UnitY().cross(w).normalized()
                                        : Vec3f::UnitX().cross(w).normalized();
   Vec3f v = w.cross(u);
 
-  const Real r1  = 2.0 * M_PI * random.scrambled(dim + 0);
-  const Real r2  = random.scrambled(dim + 1);
+  const Real r1  = 2.0 * M_PI * random.next();
+  const Real r2  = random.next();
   const Real r2s = std::sqrt(r2);
   
   return (u * std::cos(r1) * r2s
@@ -160,7 +162,7 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
                const Model& model,
                const Bvh::BvhNode& bvh_node,
                const Hdri& bg,
-               Halton& random) {
+               Qmc& random) {
 
   // BVHによるRayとMeshの交差判定
   Bvh::TestInfo test_info;
@@ -274,8 +276,8 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
   if (!material.diffuse().isZero()) {
     // TIPS:ベクトルが同じ場所に衝突しないように少し浮かせる
     Vec3f passtarce_start(test_info.hit_pos + test_info.hit_normal * 0.001);
-    Vec3f passtarce_vec = radiationVector_qmc(test_info.hit_normal, random, recursive_depth * 2);
-    
+    Vec3f passtarce_vec = radiationVector_qmc(test_info.hit_normal, random);
+
     light_diffuse = rayTrace(passtarce_start, passtarce_vec,
                              recursive_depth + 1,
                              recursive_depth_max,
@@ -318,8 +320,6 @@ struct RenderInfo {
 
   Hdri bg;
 
-  std::vector<std::vector<int> > perm_table;
-
   int subpixel_num;
   int sample_num;
   int recursive_depth;
@@ -337,7 +337,6 @@ struct RenderInfo {
              const std::vector<Light>& src_lights,
              const Model& src_model,
              const std::string& bg_path,
-             const std::vector<std::vector<int> >& src_perm_table,
              const int src_subpixel_num,
              const int src_sample_num,
              const int src_recursive_depth,
@@ -352,7 +351,6 @@ struct RenderInfo {
     model(src_model),
     bvh_node(Bvh::createFromModel(src_model)),
     bg(bg_path),
-    perm_table(src_perm_table),
     subpixel_num(src_subpixel_num),
     sample_num(src_sample_num),
     recursive_depth(src_recursive_depth),
@@ -372,9 +370,6 @@ Real expose(const Real light, const Real exposure) {
 
 bool render(std::shared_ptr<std::vector<u_char> > row_image,
             std::shared_ptr<RenderInfo> info) {
-  Halton subpixel_random(info->perm_table);
-  Halton render_random(info->perm_table);
-  
   bool do_dof = info->lens_radius > 0.0;
   
   for (int iy = 0; iy < info->size.y(); ++iy) {
@@ -384,24 +379,24 @@ bool render(std::shared_ptr<std::vector<u_char> > row_image,
       Pixel sub_pixel = Pixel::Zero();
       
       for (int i = 0; i < info->subpixel_num; ++i) {
-        Real x = ix;
-        Real y = iy;
-
-        subpixel_random.offset(i + (x + y * info->size.x()) * info->subpixel_num);
-        x += subpixel_random(0) - 0.5;
-        y += subpixel_random(1) - 0.5;
-      
-        // 画面最前→最奥へ伸びる線分を計算
-        Vec3f ray_start = info->camera.posToWorld(Vec3f(x, y, 0.0),
-                                                 Affinef::Identity(), info->viewport);
-        Vec3f ray_end   = info->camera.posToWorld(Vec3f(x, y, 1.0),
-                                                 Affinef::Identity(), info->viewport);
-
-        Vec3f ray_vec = (ray_end - ray_start).normalized();
 
         for (int h = 0; h < info->sample_num; ++h) {
           // １ピクセル内で乱数が完結するよう調節
-          render_random.offset(h + (x + y * info->size.x()) * (info->sample_num * info->subpixel_num));
+          Qmc render_random(h + i * info->sample_num + (ix + iy * info->size.x()) * (info->sample_num * info->subpixel_num));
+          
+          Real r1 = 2.0 * render_random.next();
+          Real r2 = 2.0 * render_random.next();
+        
+          Real x = ix + ((r1 < 1.0) ? std::sqrt(r1) - 1.0 : 1.0 - std::sqrt(2.0 - r1));
+          Real y = iy + ((r2 < 1.0) ? std::sqrt(r2) - 1.0 : 1.0 - std::sqrt(2.0 - r2));
+        
+          // 画面最前→最奥へ伸びる線分を計算
+          Vec3f ray_start = info->camera.posToWorld(Vec3f(x, y, 0.0),
+                                                    Affinef::Identity(), info->viewport);
+          Vec3f ray_end   = info->camera.posToWorld(Vec3f(x, y, 1.0),
+                                                    Affinef::Identity(), info->viewport);
+
+          Vec3f ray_vec = (ray_end - ray_start).normalized();
           
           if (do_dof) {
             // レンズの屈折をシミュレーション(被写界深度)
@@ -412,7 +407,7 @@ bool render(std::shared_ptr<std::vector<u_char> > row_image,
             Vec3f focus_pos = ray_start + ray_vec * ft;
 
             // 適当に決めたレンズの通過位置とフォーカスが合う位置からRayを作り直す(屈折効果)
-            Vec2f lens = concentricSampleDisk(render_random(0), render_random(1)) * info->lens_radius;
+            Vec2f lens = concentricSampleDisk(render_random.next(), render_random.next()) * info->lens_radius;
             ray_start.x() += lens.x();
             ray_start.y() += lens.y();
             ray_vec = (focus_pos - ray_start).normalized();
