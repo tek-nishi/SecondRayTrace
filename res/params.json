@@ -6,8 +6,8 @@
   
   "wait_time": 30,
 
-  "subpixel_num": 4,
-  "sample_num":   75,
+  "subpixel_num": 3,
+  "sample_num":   100,
 
   "recursive_depth": 7,
 
