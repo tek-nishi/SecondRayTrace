@@ -140,9 +140,7 @@ public:
   const Pixel& transparent() const { return transparent_; }
   Real ior() const { return ior_; }
 
-#ifdef DEBUG
   void ior(const Real value) { ior_ = value; } 
-#endif
   
 };
 

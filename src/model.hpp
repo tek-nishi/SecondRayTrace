@@ -94,9 +94,7 @@ public:
   const std::vector<std::shared_ptr<Mesh> >& mesh() const { return meshes_; }
   const std::vector<Material>& material() const {return material_; }
 
-#ifdef DEBUG
   std::vector<Material>& material() {return material_; }
-#endif
 
   
   const Node& rootNode() const { return root_node_; }
