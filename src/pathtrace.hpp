@@ -292,12 +292,14 @@ Pixel rayTrace(const Vec3f ray_start, const Vec3f ray_vec,
   Real refract_value = 1.0 - material.transparent().maxCoeff();
 
   Pixel diffuse_color = material.diffuse();
+#if 0
   if (material.hasTexture()) {
     Real u = test_info.hit_uv.x();
     Real v = test_info.hit_uv.y();
     
     diffuse_color = material.texture().pixel(u, v);
   }
+#endif
 
   return diffuse_color * light_diffuse * reflect_value * refract_value
        + material.reflective() * reflection_pixel

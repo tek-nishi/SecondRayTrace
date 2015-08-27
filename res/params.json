@@ -1,22 +1,22 @@
 {
-  "window_width":  512,
-  "window_height": 384,
+  "window_width":  640,
+  "window_height": 480,
 
   "path": "scene2.dae",
   
   "wait_time": 30,
 
-  "subpixel_num": 4,
-  "sample_num":   16,
+  "subpixel_num": 3,
+  "sample_num":   100,
 
   "recursive_depth": 7,
 
   "focal_distance": 1.24,
-  "lens_radius":    0.02,
+  "lens_radius":    0.04,
 
-  "exposure": -2.6,
+  "exposure": -2.7,
 
-  "ior_value": 1.8,
+  "ior_value": 1.5,
   
   "environment": "03-Ueno-Shrine_Env.hdr"
 }
