@@ -1,5 +1,7 @@
 # SecondRaytrace
 
+![レンダリング結果](completion.png)
+
 ## これは何??
 
 [レイトレ合宿3!!!](https://sites.google.com/site/raytracingcamp3/)への応募作品です。
