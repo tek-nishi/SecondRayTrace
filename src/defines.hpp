@@ -17,8 +17,9 @@
 #define PREPRO_STR(value)    #value
 
 
-#if 1
+#if 0
 
+// FIXME:Windowsの32bit buildだとEigenが16bit alignされない
 using Real = float;
 #define glMultMatrix(...) glMultMatrixf(__VA_ARGS__)
 #define glLoadMatrix(...) glLoadMatrixf(__VA_ARGS__)
