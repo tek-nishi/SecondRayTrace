@@ -17,10 +17,19 @@
 #define PREPRO_STR(value)    #value
 
 
-using Real = double;
+#if 1
 
+using Real = float;
+#define glMultMatrix(...) glMultMatrixf(__VA_ARGS__)
+#define glLoadMatrix(...) glLoadMatrixf(__VA_ARGS__)
+
+#else
+
+using Real = double;
 #define glMultMatrix(...) glMultMatrixd(__VA_ARGS__)
 #define glLoadMatrix(...) glLoadMatrixd(__VA_ARGS__)
+
+#endif
 
 
 // 符号無し整数の別名定義

@@ -8,6 +8,7 @@
 
 #include "defines.hpp"
 #include <deque>
+#include <limits>
 #include "collision.hpp"
 #include "model.hpp"
 
