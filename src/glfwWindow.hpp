@@ -35,7 +35,9 @@ public:
              const bool is_visible = true, const bool is_fullscreen = false) {
     DOUT << "GlfwWindow()" << std::endl;
 
-    if (!glfwInit()) throw "Can't Initialize GLFW.";
+    // FIXME:main.cppの頭で実行しているので、
+    //       ここでの初期化が必要ない
+    // if (!glfwInit()) throw "Can't Initialize GLFW.";
 
    if (!is_visible) glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     

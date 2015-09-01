@@ -51,6 +51,10 @@ std::shared_ptr<Pathtrace::RenderInfo> createRenderInfo(const picojson::value& p
 
 
 int main() {
+  // FIXME:最初にGLFWを初期化しないと、OSXでcurrent pathがアプリのリソースフォルダに
+  //       なっていない
+  if (!glfwInit()) throw "Can't Initialize GLFW.";
+  
   // OS依存実装
   Os os;
   

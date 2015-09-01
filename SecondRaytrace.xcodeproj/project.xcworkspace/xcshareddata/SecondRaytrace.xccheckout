@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>F22938BD-E1B2-47E6-AF28-BCD450856780</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SecondRaytrace</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E6A5E8087E4E7416DA43AA78207677BF37A9C520</key>
+		<string>github.com:tek-nishi/SecondRayTrace.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SecondRaytrace.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>E6A5E8087E4E7416DA43AA78207677BF37A9C520</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:tek-nishi/SecondRayTrace.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E6A5E8087E4E7416DA43AA78207677BF37A9C520</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E6A5E8087E4E7416DA43AA78207677BF37A9C520</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SecondRaytrace</string>
+		</dict>
+	</array>
+</dict>
+</plist>
