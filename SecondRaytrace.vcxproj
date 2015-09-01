@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\rgbe.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9EFD6A36-08E8-485E-B135-5B6519C0F6B1}</ProjectGuid>
@@ -78,6 +79,9 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;PRODUCT_NAME=$(ProjectName);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <StringPooling>true</StringPooling>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
