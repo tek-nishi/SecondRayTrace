@@ -17,8 +17,9 @@
 #define PREPRO_STR(value)    #value
 
 
-#if 1
+#if 0
 
+// FIXME:floatを使うと、WindowsでSSH絡みのアクセスエラーが発生する...
 using Real = float;
 #define glMultMatrix(...) glMultMatrixf(__VA_ARGS__)
 #define glLoadMatrix(...) glLoadMatrixf(__VA_ARGS__)
@@ -58,8 +59,6 @@ using u_long = unsigned long;
 
 // GLEWのリンク形式
 #define GLEW_STATIC
-// GLFWのリンク形式
-#define GLFW_DLL
 
 #include <windows.h>
 

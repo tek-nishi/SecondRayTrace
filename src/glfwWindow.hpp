@@ -19,7 +19,11 @@
 
 // リンクするライブラリの指示(Windows)
 #if defined (_MSC_VER)
-#pragma comment(lib, "glfw3dll.lib")
+#ifdef DEBUG
+#pragma comment(lib, "glfw3d.lib")
+#else
+#pragma comment(lib, "glfw3.lib")
+#endif
 #pragma comment(lib, "opengl32.lib")
 #endif
 

@@ -17,7 +17,7 @@
 
 // リンクするライブラリの定義(Windows)
 #if defined (_MSC_VER)
-#ifdef _DEBUG
+#ifdef DEBUG
 #pragma comment (lib, "libpngd.lib")
 #pragma comment (lib, "zlibd.lib")
 #else
